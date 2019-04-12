@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Monero Jeanniton, Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.5">
+    <title>Goal-Tracking Dashboard</title>
+
+    <link href="index.html">
+
+    <!-- Bootstrap core and others CSS & JS -->
+	<link href="./dist/css/bootstrap.min.css" rel="stylesheet">
+  	<script src="./dist/js/bootstrap.min"></script>
+  	<script src="./dist/js/jquery-3.3.1.slim.min.js"></script>
+  	<script src="./dist/js/popper.min.js"></script>
+   	
+    
+    <!-- Custom styles and JavaScript for this template -->
+    <link href="./dashboard.css" rel="stylesheet">
+    <script src="./dashboard.js"></script>
+    
+    <!-- Chartjs -->
+    <script src="./dist/js/chart.js"></script>
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+   
+<!-- MAIN CONTAINER STARTS -->
+<div id="main" class="bg-primary">
+	
+	<div class="fluid-container">
+		<!-- TOP HEADER STARTS -->
+		<div class="heading bg-primary-light">
+			<div class="row">
+				<div class="col-2">
+				  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4">
+					<h5 class="my-0 mr-md-auto font-weight-normal">Goal-Tracking</h5>
+				  </div>
+				</div>
+				<div class="col">
+				  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4">
+					<nav class="mx-auto">
+						<span class="p-2">4/25/19</span>
+						<span class="p-2">13:05PM</span>
+					  </nav>
+				  </div>
+				</div>
+
+			</div>
+		</div>
+		<!-- TOP HEADER ENDS -->
+		
+		<!-- BODY STARTS -->
+		<div class="body">
+			<div class="row">
+					<div class="col-2">
+						<!-- SIDEBAR STARTS -->
+						<div class="sidebar">
+							<!-- WATER VOLUME CARD STARTS -->
+							<div class="card">
+								<div class="card-header">
+									Water Volume
+								</div>
+								<div class="card-body">
+									<div class="card-text">64321</div>
+									<div class="card-footer">Gallon(s)</div>
+								</div>
+							</div>
+							<!-- WATER VOLUME CARD ENDS -->
+
+							<!-- BONUS CARD STARTS -->
+							<div class="card">
+								<div class="card-header">
+									BONUS
+								</div>
+								<div class="card-body">
+									<div class="card-text">1846</div>
+									<div class="card-footer">HTG</div>
+								</div>
+							</div>
+							<!-- BONUS CARD ENDS -->
+
+							<!-- GOAL CARD STARTS -->
+							<div class="card">
+								<div class="card-header">
+									Goal
+								</div>
+								<div class="card-body">
+									<div class="card-text">88000</div>
+									<div class="card-footer">Gallon(s)</div>
+								</div>
+							</div>
+							<!-- GOAL CARD ENDS -->
+						</div>
+						<!-- SIDEBAR ENDS -->
+					</div>
+					<div class="col">
+						<!-- CONTENT STATS -->
+						<div class="content">
+							<canvas id="chart" width="400px" height="400px"></canvas>
+						</div>
+						<!-- CONTENT ENDS -->
+					</div>
+				</div>
+		</div>
+		<!-- BODY ENDS -->
+		
+	</div>
+	
+	
+</div>
+<!-- MAIN CONTAINER ENDS -->
+
+</body>
+</html>

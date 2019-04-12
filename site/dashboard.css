@@ -1,0 +1,135 @@
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+body {
+	background-color: #16375e !important;
+}
+
+.bg-primary {
+	background-color: #17375e!important;
+}
+
+.bg-primary-light {
+	background-color: #346eb6!important;
+}
+
+.v-center {
+	margin: auto 0;
+}
+
+#main {
+	min-width: 600px;
+	min-height: calc(100vw*0.4);
+	width: calc(100vw - 15px*2);
+	height: calc(100vh - 15px*2);
+	margin: 15px;
+	display: flex;
+    flex-direction: column;
+}
+
+.heading {
+	color: white;
+    margin-bottom: .5rem;
+    padding: .25rem;
+}
+
+.flex-row {
+	display: flex;
+    flex: 1;
+    flex-direction: row;
+    background-color: transparent;
+    justify-content: space-between;
+}
+.flex-left {
+	display: flex;
+	flex: 2;
+}
+.flex-right {
+	display: flex;
+	flex: 10;
+}
+
+.sidebar {
+	flex: 1;
+    justify-content: center;
+    align-self: center;
+	margin: auto;
+}
+
+.sidebar .card{
+	text-align: center;
+	margin: 15px 20px 15px 0px;
+}
+
+.sidebar .card .card-header{
+	background-color: transparent;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-decoration: underline;
+    border-bottom: 0;
+}
+
+.sidebar .card .card-text{
+	font-size: 2rem;
+	font-weight: 800;
+}
+
+.sidebar .card .card-footer{
+	background-color: transparent;
+    border-top: 0;
+    font-weight: 700;
+}
+
+
+.content {
+	flex: 10;
+    display: flex;
+}
+
+.top-content {
+	background-color: white;
+	flex: 2;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+}
+
+.content-header {
+    color: black;
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: .5rem;
+}
+
+.middle-content {
+	flex: 8;
+}
+
+.bottom-content {
+	flex: 2;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#canvas {
+	background-color: white;
+	width: 100%;	
+}
+
+.uptime-info {
+	background-color: white;
+    padding: 10px 25px;
+    width: 49%;
+    display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
