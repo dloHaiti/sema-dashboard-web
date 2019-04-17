@@ -38,6 +38,10 @@ body {
     padding: .25rem;
 }
 
+.date-data {
+	display: block;
+}
+
 .flex-row {
 	display: flex;
     flex: 1;

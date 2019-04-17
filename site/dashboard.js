@@ -6,44 +6,56 @@ $(window).on("load", function(){
 	let canvas = $("#canvas")[0],
 		ctx = canvas.getContext('2d');
 	
-	// Setup our char here
-	var chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [0, 20000, 40000, 60000, 80000, 100000, 120000, 140000],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
+	// Intialize our chart data
+	let daysInMonth = getDaysInMonth(new Date().getMonth() + 1, new Date().getYear()),
+		lastDayInMonth = daysInMonth[daysInMonth.length - 1],
+		goal = {
+			label: 'Goal Bar',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#54b150',
+			borderWidth: 5,
+			data: [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
+		},
+		goalPath = {
+			label: '',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#54b150',
+			borderWidth: 1,
+			borderDash: [10, 10],
+			data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
+		},
+		bar = {
+			label: 'Bar',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#facb35',
+			borderWidth: 5,
+			data: [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
+		},
+		actual = {
+			label: 'Actual Water Volume',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#4471c4',
+			borderWidth: 5,
+			data: [410, 5000, 12350]
+		};
+	// Configure the chart
+	Chart.defaults.global.elements.point.pointStyle = 'line';
+	// Setup our chart here
+	let chart = new Chart(ctx, {
+		// The type of chart we want to create
+		type: 'line',
+
+		// The data for our dataset
+		data: {
+			labels: daysInMonth,
+			datasets: [goal, goalPath, bar, actual]
+		},
+
+		// Configuration options go here
+		options: {}
+	});
 	
+	// return current time and date
 	var getTimeAndDate = function(){
 		var spDate = "/";
 		var spTime = ":";
@@ -52,7 +64,7 @@ $(window).on("load", function(){
 		// Building date (formatted)
 		var dd = today.getDate();
 		var mm = today.getMonth()+1; //As January is 0.
-		var yyyy = today.getYear();
+		var yyyy = today.getFullYear();
 		var date = mm+spDate+dd+spDate+yyyy;
 		// Building time
 		var hr = today.getHours();
@@ -63,7 +75,7 @@ $(window).on("load", function(){
 		if(dd<10) dd='0'+dd;
 		if(mm<10) mm='0'+mm;
 		
-		return ("<span class=\"p-2\">" + date + "</span> <span class=\"p-2\">" + time +"</span>");
+		return ("<span class=\"date-data\">" + date + "</span> <span class=\"date-data\">" + time +"</span>");
 	};
 	
 	var refresh = function(){
@@ -73,3 +85,25 @@ $(window).on("load", function(){
 	// Refresh the dashboard every second
 	var intervalID = setInterval(refresh, 1*1000);
 });
+
+
+
+
+/* HELPER FUNCTIONS */
+var getDaysInMonth = function(month, year){
+	// Total days in month
+	let monthList= [],
+		daysTotal = new Date(year, month, 0).getDate(),
+		monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+		daysList = [];
+	// Creating days list for the specified month
+	for(var i=0; i<daysTotal; i++){
+		daysList.push(
+			i+1 /*date*/ + "-" + monthsList[month] /*month*/ + "-" + year
+			
+		);
+	}
+	return daysList;
+	
+};
+
