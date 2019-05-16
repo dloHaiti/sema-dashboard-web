@@ -1,9 +1,50 @@
-// JavaScript Document
 "use strict";
+
+const API_BASE_URL = '/';
+const DEFAULT_SYNC_INTERVAL = 10 * 60; // 10 minutes
+
+// Intialize our chart data
+const daysInMonth = getDaysInMonth(new Date().getMonth(), new Date().getFullYear());
+const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
+const params = {
+	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
+	endDate: moment().endOf('month').format('YYYY-MM-DD')
+};
+
+// Initialize chart content
+const currentWaterVolume = {
+			label: 'Current Water Volume',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#4471c4',
+			borderWidth: 5,
+			data: null
+		},
+		goal = {
+			label: 'Goal',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#54b150',
+			borderWidth: 5,
+			data: [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
+		},
+		goalPath = {
+			label: 'Goal Path',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#54b150',
+			borderWidth: 1,
+			borderDash: [10, 10],
+			data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
+		},
+		bar = {
+			label: 'Minimum Goal',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#facb35',
+			borderWidth: 5,
+			data: [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
+		};
 
 $(window).on("load", function() {
 
-	var urlParams = new URLSearchParams(location.search);
+	const urlParams = new URLSearchParams(location.search);
 
 	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
 		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=cabaret");
@@ -40,52 +81,11 @@ $(window).on("load", function() {
 	// Pull new data when ready
 	fetchDashboardData(params, chart);
 
-	// Pull new data every 5 minutes
-	// setInterval(() => {
-	// 	fetchDashboardData(params, chart);
-	// }, 5*60*1000);
+	// Pull new data regularly
+	setInterval(() => {
+		fetchDashboardData(params, chart);
+	}, DEFAULT_SYNC_INTERVAL * 1000);
 });
-
-const API_BASE_URL = '/';
-
-const params = {
-	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
-	endDate: moment().endOf('month').format('YYYY-MM-DD')
-};
-
-// Intialize our chart data
-const daysInMonth = getDaysInMonth(new Date().getMonth(), new Date().getFullYear()),
-	lastDayInMonth = daysInMonth[daysInMonth.length - 1];
-
-const currentWaterVolume = {
-			label: 'Current Water Volume',
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#4471c4',
-			borderWidth: 5,
-			data: null
-		},
-		goal = {
-			label: 'Goal',
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#54b150',
-			borderWidth: 5,
-			data: [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
-		},
-		goalPath = {
-			label: 'Goal Path',
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#54b150',
-			borderWidth: 1,
-			borderDash: [10, 10],
-			data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
-		},
-		bar = {
-			label: 'Minimum Goal',
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#facb35',
-			borderWidth: 5,
-			data: [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
-		};
 
 function refresh() {
 	$("#date").html(getTimeAndDate());
@@ -160,7 +160,7 @@ function fetchDashboardData(params, chart) {
 
 				$('#water-volume').text(latestVolume);
 				$('#goal').text(goal);
-				// $('#bonus').text(calculateBonus(latestVolume, response));
+				$('#bonus').text(calculateBonus(latestVolume, goal, minGoal));
 
 				chart.data.datasets[3].data = newData;
 				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];
@@ -173,6 +173,16 @@ function fetchDashboardData(params, chart) {
 				reject(err);
 			});
 	});
+}
+
+// So the formula goes:
+// If Total Volume < Bar, then Bonus = 0
+// If Bar < Total Volume < Goal, then Bonus = (Total Volume-Bar)/5
+// IF Total Volume>Goal, then Bonus = (Total Volume-Bar)/5 + (Total Volume-Goal)/5*2 + 1000
+function calculateBonus(currentVolume, goal, bar) {
+	if (currentVolume < bar) return 0;
+	else if (currentVolume < goal) return (currentVolume - bar) / 5;
+	else return ((currentVolume - bar) / 5) + ((currentVolume - goal) / (5 * 2)) + 1000;
 }
 
 function getSettingsValue(settings, settingsName) {
@@ -189,7 +199,7 @@ function getDaysInMonth(month, year) {
 		monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
 		daysList = [];
 	// Creating days list for the specified month
-	for(var i=0; i<daysTotal; i++){
+	for(let i=0; i<daysTotal; i++){
 		daysList.push(`${monthsList[month]} ${i + 1}`);
 	}
 	return daysList;
