@@ -11,9 +11,10 @@
 
     <!-- Bootstrap core and others CSS & JS -->
 	<link href="./dist/css/bootstrap.min.css" rel="stylesheet">
-  	<script src="./dist/js/bootstrap.min"></script>
-  	<script src="./dist/js/jquery-3.3.1.slim.min.js"></script>
-  	<script src="./dist/js/popper.min.js"></script>
+	<script src="./dist/js/bootstrap.min.js"></script>
+	<script src="./dist/js/jquery-3.3.1.slim.min.js"></script>
+	<script src="./dist/js/popper.min.js"></script>
+	<script src="./dist/js/moment.min.js"></script>
    	
     
     <!-- Custom styles and JavaScript for this template -->
@@ -32,6 +33,10 @@
         -ms-user-select: none;
         user-select: none;
       }
+
+			#kiosk-name {
+				text-transform: capitalize;
+			}
 
       @media (min-width: 768px) {
         .bd-placeholder-img-lg {
@@ -78,23 +83,11 @@
 								Water Volume
 							</div>
 							<div class="card-body">
-								<div class="card-text">64321</div>
+								<div class="card-text" id="water-volume">-</div>
 								<div class="card-footer">Gallon(s)</div>
 							</div>
 						</div>
 						<!-- WATER VOLUME CARD ENDS -->
-
-						<!-- BONUS CARD STARTS -->
-						<div class="card">
-							<div class="card-header">
-								BONUS
-							</div>
-							<div class="card-body" style="color:#54b150; ">
-								<div class="card-text">1846</div>
-								<div class="card-footer">HTG</div>
-							</div>
-						</div>
-						<!-- BONUS CARD ENDS -->
 
 						<!-- GOAL CARD STARTS -->
 						<div class="card">
@@ -102,11 +95,23 @@
 								Goal
 							</div>
 							<div class="card-body">
-								<div class="card-text">88000</div>
+								<div class="card-text" id="goal">-</div>
 								<div class="card-footer">Gallon(s)</div>
 							</div>
 						</div>
 						<!-- GOAL CARD ENDS -->
+
+						<!-- BONUS CARD STARTS -->
+						<div class="card">
+							<div class="card-header">
+								BONUS
+							</div>
+							<div class="card-body" style="color:#54b150; ">
+								<div class="card-text" id="bonus">-</div>
+								<div class="card-footer">HTG</div>
+							</div>
+						</div>
+						<!-- BONUS CARD ENDS -->
 					</div>
 					<!-- SIDEBAR ENDS -->
 				</div>
@@ -114,14 +119,14 @@
 				<div class="flex-right">
 					<div class="content flex-column">
 						<div class="top-content">
-							<h3 class="content-header">Kiosk Goal-Tracking</h3>
+							<h3 class="content-header"><span id="kiosk-name">Kiosk</span> Goal-Tracking</h3>
 						</div>
 						<div class="middle-content">
 							<canvas id="canvas"></canvas>
 						</div>
 						<div class="bottom-content">
-							<span class="uptime-info">UPTIME = <span style="color: #7035a0;">90%</span></span>
-							<span class="uptime-info">Vehicle UPTIME = <span style="color:#9a4c1b;">98%</span></span>
+							<span class="uptime-info">UPTIME = <span style="color: #7035a0;">-</span></span>
+							<span class="uptime-info">Vehicle UPTIME = <span style="color:#9a4c1b;">-</span></span>
 						</div>
 					</div>
 				</div>
