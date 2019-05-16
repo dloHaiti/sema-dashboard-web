@@ -38,10 +38,12 @@ $(window).on("load", function() {
 	setInterval(refresh, 1000);
 
 	// Pull new data when ready
-	fetchDashboardData(params, chart);
+	fetchDashboardData(params, chart)
 
-	// Pull new data every 10 minutes
-	// setInterval(fetchDashboardData, 5*60*1000);
+	// Pull new data every 5 minutes
+	// setInterval(() => {
+	// 	fetchDashboardData(params, chart);
+	// }, 5*60*1000);
 });
 
 const API_BASE_URL = 'http://localhost:3001';
@@ -156,8 +158,8 @@ function fetchDashboardData(params, chart) {
 
 				chart.update();
 			})
-			.catch(function(error){
-				reject( error)
+			.catch(err => {
+				reject(err);
 			});
 	});
 }
