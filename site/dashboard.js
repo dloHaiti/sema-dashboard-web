@@ -6,7 +6,7 @@ $(window).on("load", function() {
 	var urlParams = new URLSearchParams(location.search);
 
 	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
-		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=Cabaret");
+		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=cabaret");
 		location.reload();
 	} else {
 		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
@@ -65,14 +65,14 @@ const currentWaterVolume = {
 			data: null
 		},
 		goal = {
-			label: 'Goal Bar',
+			label: 'Goal',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
 			borderWidth: 5,
 			data: [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
 		},
 		goalPath = {
-			label: '',
+			label: 'Goal Path',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
 			borderWidth: 1,
@@ -80,7 +80,7 @@ const currentWaterVolume = {
 			data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
 		},
 		bar = {
-			label: 'Bar',
+			label: 'Minimum Goal',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#facb35',
 			borderWidth: 5,
@@ -154,9 +154,18 @@ function fetchDashboardData(params, chart) {
 					return latestVolume;
 				});
 
-				$('#water-volume').text(latestVolume);
+				// We update the bar values, the card values and update the chart
+				const goal = getSettingsValue(response.settings, 'monthly_goal')
+				const minGoal = getSettingsValue(response.settings, 'min_monthly_goal')
 
-				chart.data.datasets[3].data = newData
+				$('#water-volume').text(latestVolume);
+				$('#goal').text(goal);
+				// $('#bonus').text(calculateBonus(latestVolume, response));
+
+				chart.data.datasets[3].data = newData;
+				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];
+				chart.data.datasets[2].data = [{ x: 0,y: minGoal}, {x: lastDayInMonth,y: minGoal }];
+				chart.data.datasets[1].data = [{x: 0,y: 0}, {x: lastDayInMonth,y: goal}]
 
 				chart.update();
 			})
@@ -164,6 +173,13 @@ function fetchDashboardData(params, chart) {
 				reject(err);
 			});
 	});
+}
+
+function getSettingsValue(settings, settingsName) {
+	return settings.reduce((final, item) => {
+		if (item.name === settingsName) return item.value;
+		return final;
+	}, 0);
 }
 
 function getDaysInMonth(month, year) {
