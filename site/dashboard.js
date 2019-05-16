@@ -1,14 +1,67 @@
 // JavaScript Document
 "use strict";
 
-$(window).on("load", function(){
-	
+$(window).on("load", function() {
+
+	var urlParams = new URLSearchParams(location.search);
+
+	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
+		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=Cabaret");
+		location.reload();
+	} else {
+		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
+		$('#kiosk-name').html(params.siteName);
+	}
+
 	let canvas = $("#canvas")[0],
 		ctx = canvas.getContext('2d');
+
+	// Configure the chart
+	Chart.defaults.global.elements.point.pointStyle = 'line';
+
+	// Setup our chart here
+	const chart = new Chart(ctx, {
+		// The type of chart we want to create
+		type: 'line',
+
+		// The data for our dataset
+		data: {
+			labels: daysInMonth,
+			datasets: [goal, goalPath, bar, currentWaterVolume]
+		},
+
+		// Configuration options go here
+		options: {}
+	});
 	
-	// Intialize our chart data
-	let daysInMonth = getDaysInMonth(new Date().getMonth() + 1, new Date().getYear()),
-		lastDayInMonth = daysInMonth[daysInMonth.length - 1],
+	// Refresh the date and time every second for live time
+	setInterval(refresh, 1000);
+
+	// Pull new data when ready
+	fetchDashboardData(params, chart);
+
+	// Pull new data every 10 minutes
+	// setInterval(fetchDashboardData, 5*60*1000);
+});
+
+const API_BASE_URL = 'http://localhost:3001';
+
+const params = {
+	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
+	endDate: moment().endOf('month').format('YYYY-MM-DD')
+};
+
+// Intialize our chart data
+const daysInMonth = getDaysInMonth(new Date().getMonth(), new Date().getFullYear()),
+	lastDayInMonth = daysInMonth[daysInMonth.length - 1];
+
+const currentWaterVolume = {
+			label: 'Current Water Volume',
+			backgroundColor: 'rgba(1, 1, 1, 0)',
+			borderColor: '#4471c4',
+			borderWidth: 5,
+			data: null
+		},
 		goal = {
 			label: 'Goal Bar',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
@@ -30,67 +83,86 @@ $(window).on("load", function(){
 			borderColor: '#facb35',
 			borderWidth: 5,
 			data: [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
-		},
-		actual = {
-			label: 'Actual Water Volume',
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#4471c4',
-			borderWidth: 5,
-			data: [410, 5000, 12350]
 		};
-	// Configure the chart
-	Chart.defaults.global.elements.point.pointStyle = 'line';
-	// Setup our chart here
-	let chart = new Chart(ctx, {
-		// The type of chart we want to create
-		type: 'line',
 
-		// The data for our dataset
-		data: {
-			labels: daysInMonth,
-			datasets: [goal, goalPath, bar, actual]
-		},
+function refresh() {
+	$("#date").html(getTimeAndDate());
+};
 
-		// Configuration options go here
-		options: {}
+// return current time and date
+function getTimeAndDate() {
+	const spDate = "/";
+	const spTime = ":";
+	
+	const today = new Date();
+	// Building date (formatted)
+	let dd = today.getDate();
+	let mm = today.getMonth()+1; //As January is 0.
+	const yyyy = today.getFullYear();
+	const date = mm+spDate+dd+spDate+yyyy;
+	// Building time
+	const hr = today.getHours();
+	const mn = today.getMinutes();
+	const sc = today.getSeconds();
+	const time = hr+spTime+mn+spTime+sc;
+
+	if(dd<10) dd='0'+dd;
+	if(mm<10) mm='0'+mm;
+	
+	return ("<span class=\"date-data\">" + date + "</span> <span class=\"date-data\">" + time +"</span>");
+};
+
+function fetchDashboardData(params, chart) {
+	return new Promise((resolve, reject ) => {
+		let url = '/dashboard?siteName=' + params.siteName;
+
+		url = url + "&beginDate=" + params.beginDate;
+		url = url + "&endDate=" + params.endDate;
+
+		fetch(`${API_BASE_URL}${url}`)
+			.then(response => response.json())
+			.then(response => {
+				// Make sure the right kiosk is set during configuration
+				if (response.status === 404) {
+					alert(response.msg);
+					location.reload();
+				}
+
+				// We update the dataset on server response
+				const availableDays = Object.keys(response.dailyVolume),
+					labels = chart.data.labels;
+
+				let latestVolume = 0;
+				let recordCount = 0;
+
+				// On days when kiosks don't open we make sure we set the last set value
+				// So that the line stays horizontal. Also, we don't display anything
+				// after the last day with records.
+				const newData = labels.map((day, idx) => {
+					if (availableDays.includes(day)) {
+						latestVolume += response.dailyVolume[day];
+
+						recordCount++;
+
+						return latestVolume;
+					} else if (recordCount >= availableDays.length) {
+						return null;
+					}
+
+					return latestVolume;
+				});
+
+				chart.data.datasets[3].data = newData
+
+				chart.update();
+			})
+			.catch(function(error){
+				reject( error)
+			});
 	});
-	
-	// return current time and date
-	var getTimeAndDate = function(){
-		var spDate = "/";
-		var spTime = ":";
-		
-		var today = new Date();
-		// Building date (formatted)
-		var dd = today.getDate();
-		var mm = today.getMonth()+1; //As January is 0.
-		var yyyy = today.getFullYear();
-		var date = mm+spDate+dd+spDate+yyyy;
-		// Building time
-		var hr = today.getHours();
-		var mn = today.getMinutes();
-		var sc = today.getSeconds();
-		var time = hr+spTime+mn+spTime+sc;
+}
 
-		if(dd<10) dd='0'+dd;
-		if(mm<10) mm='0'+mm;
-		
-		return ("<span class=\"date-data\">" + date + "</span> <span class=\"date-data\">" + time +"</span>");
-	};
-	
-	var refresh = function(){
-		$("#date").html(getTimeAndDate());
-	};
-	
-	// Refresh the dashboard every second
-	var intervalID = setInterval(refresh, 1*1000);
-});
-
-
-
-
-/* HELPER FUNCTIONS */
-var getDaysInMonth = function(month, year){
+function getDaysInMonth(month, year) {
 	// Total days in month
 	let monthList= [],
 		daysTotal = new Date(year, month, 0).getDate(),
@@ -98,10 +170,7 @@ var getDaysInMonth = function(month, year){
 		daysList = [];
 	// Creating days list for the specified month
 	for(var i=0; i<daysTotal; i++){
-		daysList.push(
-			i+1 /*date*/ + "-" + monthsList[month] /*month*/ + "-" + year
-			
-		);
+		daysList.push(`${monthsList[month]} ${i + 1}`);
 	}
 	return daysList;
 	
