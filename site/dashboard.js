@@ -46,7 +46,7 @@ $(window).on("load", function() {
 	// }, 5*60*1000);
 });
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = '/';
 
 const params = {
 	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
@@ -116,7 +116,7 @@ function getTimeAndDate() {
 
 function fetchDashboardData(params, chart) {
 	return new Promise((resolve, reject ) => {
-		let url = '/dashboard?siteName=' + params.siteName;
+		let url = 'dataset/dashboard?siteName=' + params.siteName;
 
 		url = url + "&beginDate=" + params.beginDate;
 		url = url + "&endDate=" + params.endDate;
