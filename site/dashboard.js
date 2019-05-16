@@ -10,7 +10,7 @@ $(window).on("load", function() {
 		location.reload();
 	} else {
 		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
-		$('#kiosk-name').html(params.siteName);
+		$('#kiosk-name').text(params.siteName);
 	}
 
 	let canvas = $("#canvas")[0],
@@ -38,7 +38,7 @@ $(window).on("load", function() {
 	setInterval(refresh, 1000);
 
 	// Pull new data when ready
-	fetchDashboardData(params, chart)
+	fetchDashboardData(params, chart);
 
 	// Pull new data every 5 minutes
 	// setInterval(() => {
@@ -153,6 +153,8 @@ function fetchDashboardData(params, chart) {
 
 					return latestVolume;
 				});
+
+				$('#water-volume').text(latestVolume);
 
 				chart.data.datasets[3].data = newData
 
