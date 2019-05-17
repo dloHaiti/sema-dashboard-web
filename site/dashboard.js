@@ -48,7 +48,7 @@ $(window).on("load", function() {
 
 	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
 		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=cabaret");
-		location.reload();
+		return location.reload();
 	} else {
 		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
 		$('#kiosk-name').text(params.siteName);
