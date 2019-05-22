@@ -160,7 +160,7 @@ function fetchDashboardData(params, chart) {
 
 				$('#water-volume').text(latestVolume);
 				$('#goal').text(goal);
-				$('#bonus').text(calculateBonus(latestVolume, goal, minGoal));
+				$('#bonus').text(Number(parseFloat(calculateBonus(latestVolume, goal, minGoal)).toFixed(2)));
 
 				chart.data.datasets[3].data = newData;
 				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];
