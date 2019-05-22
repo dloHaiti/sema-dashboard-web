@@ -13,21 +13,21 @@ const params = {
 
 // Initialize chart content
 const currentWaterVolume = {
-			label: 'Current Water Volume',
+			label: 'Volim Dlo Aktyèl',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#4471c4',
 			borderWidth: 5,
 			data: null
 		},
 		goal = {
-			label: 'Goal',
+			label: 'Objektif',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
 			borderWidth: 5,
 			data: [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
 		},
 		goalPath = {
-			label: 'Goal Path',
+			label: 'Wout Objektif',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
 			borderWidth: 1,
@@ -35,7 +35,7 @@ const currentWaterVolume = {
 			data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
 		},
 		bar = {
-			label: 'Minimum Goal',
+			label: 'Objektif Minimum',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#facb35',
 			borderWidth: 5,
@@ -47,7 +47,7 @@ $(window).on("load", function() {
 	const urlParams = new URLSearchParams(location.search);
 
 	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
-		confirm("No kiosk set! Please, set kiosk in the URL. (i.e.: .../?k=cabaret");
+		confirm("Pa gen kyòsk nan lyen an. SVP, mete yon kyòsk konsa: .../?k=cabaret");
 		return location.reload();
 	} else {
 		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
@@ -196,7 +196,7 @@ function getDaysInMonth(month, year) {
 	// Total days in month
 	let monthList= [],
 		daysTotal = new Date(year, month, 0).getDate(),
-		monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+		monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 		daysList = [];
 	// Creating days list for the specified month
 	for(let i=0; i<daysTotal; i++){
