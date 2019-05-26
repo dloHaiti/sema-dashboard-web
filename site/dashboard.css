@@ -22,6 +22,11 @@ body {
 	margin: auto 0;
 }
 
+.red {
+    color: #900 !important;
+    text-transform: uppercase;
+}
+
 #main {
 	min-width: 600px;
 	min-height: calc(100vw*0.4);

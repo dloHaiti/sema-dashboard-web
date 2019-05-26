@@ -79,11 +79,39 @@ $(window).on("load", function() {
 	setInterval(refresh, 1000);
 
 	// Pull new data when ready
-	fetchDashboardData(params, chart);
+	fetchDashboardData(params, chart)
+		.then(() => {
+			if (!navigator.onLine) {
+				$('#offline-status').show();
+			} else {
+				$('#offline-status').hide();
+			}
+		})
+		.catch(() => {
+			if (!navigator.onLine) {
+				$('#offline-status').show();
+			} else {
+				$('#offline-status').hide();
+			}
+		});
 
 	// Pull new data regularly
 	setInterval(() => {
-		fetchDashboardData(params, chart);
+		fetchDashboardData(params, chart)
+			.then(() => {
+				if (!navigator.onLine) {
+					$('#offline-status').show();
+				} else {
+					$('#offline-status').hide();
+				}
+			})
+			.catch(() => {
+				if (!navigator.onLine) {
+					$('#offline-status').show();
+				} else {
+					$('#offline-status').hide();
+				}
+			});
 	}, DEFAULT_SYNC_INTERVAL * 1000);
 });
 
@@ -168,9 +196,10 @@ function fetchDashboardData(params, chart) {
 				chart.data.datasets[1].data = [{x: 0,y: 0}, {x: lastDayInMonth,y: goal}]
 
 				chart.update();
+				resolve();
 			})
 			.catch(err => {
-				reject(err);
+				throw err;
 			});
 	});
 }
