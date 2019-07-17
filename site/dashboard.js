@@ -1,10 +1,10 @@
 "use strict";
 
-const API_BASE_URL = '/';
+const API_BASE_URL = 'http://dlo.semawater.org/';
 const DEFAULT_SYNC_INTERVAL = 10 * 60; // 10 minutes
 
-// Intialize our chart data
-const daysInMonth = getDaysInMonth(new Date().getMonth(), new Date().getFullYear());
+// Initialize our chart data
+const daysInMonth = getDaysInMonth((new Date().getMonth() + 1), new Date().getFullYear());
 const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
 const params = {
 	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
@@ -48,7 +48,6 @@ $(window).on("load", function() {
 
 	if (!urlParams.has('k') && !urlParams.has('kiosk')) {
 		confirm("Pa gen kyòsk nan lyen an. SVP, mete yon kyòsk konsa: .../?k=cabaret");
-		return location.reload();
 	} else {
 		params.siteName = urlParams.get('k') || urlParams.get('kiosk');
 		$('#kiosk-name').text(params.siteName);
@@ -74,7 +73,7 @@ $(window).on("load", function() {
 		// Configuration options go here
 		options: {}
 	});
-	
+
 	// Refresh the date and time every second for live time
 	setInterval(refresh, 1000);
 
@@ -123,7 +122,7 @@ function refresh() {
 function getTimeAndDate() {
 	const spDate = "/";
 	const spTime = ":";
-	
+
 	const today = new Date();
 	// Building date (formatted)
 	let dd = today.getDate();
@@ -138,7 +137,7 @@ function getTimeAndDate() {
 
 	if(dd<10) dd='0'+dd;
 	if(mm<10) mm='0'+mm;
-	
+
 	return ("<span class=\"date-data\">" + date + "</span> <span class=\"date-data\">" + time +"</span>");
 };
 
@@ -232,6 +231,6 @@ function getDaysInMonth(month, year) {
 		daysList.push(`${monthsList[month]} ${i + 1}`);
 	}
 	return daysList;
-	
+
 };
 
