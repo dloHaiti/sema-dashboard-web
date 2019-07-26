@@ -124,12 +124,12 @@ body {
     flex-direction: row;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
 }
 
 #canvas {
 	background-color: white;
-	width: 100%;	
+	width: 100%;
 }
 
 .uptime-info {

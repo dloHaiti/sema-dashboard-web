@@ -11,16 +11,24 @@ const params = {
 	endDate: moment().endOf('month').format('YYYY-MM-DD')
 };
 
-// Initialize chart content
+
+// Declare goal and minGoal as global
+let updatedVolume = null,
+	goal = null,
+	minGoal = null;
+// Initialize dashboard variables
 const currentPath = {
+			yAxisID: 'Y1',
 			label: 'Volim Dlo Aktyèl',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#4471c4',
 			borderWidth: 3,
 			radius: 3,
 			data: null,
+			fill: 'start',
 		},
 		goalPath = {
+			yAxisID: 'Y1',
 			label: 'Wout Objektif',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
@@ -31,6 +39,7 @@ const currentPath = {
 			data: null,
 		},
 		goalBar = {
+			yAxisID: 'Y1',
 			label: 'Objektif',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#54b150',
@@ -40,6 +49,7 @@ const currentPath = {
 			data: null,
 		},
 		profitBar = {
+			yAxisID: 'Y1',
 			label: 'Objektif Minimum',
 			backgroundColor: 'rgba(1, 1, 1, 0)',
 			borderColor: '#facb35',
@@ -48,16 +58,46 @@ const currentPath = {
 			// [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
 			data: null,
 		},
-		// Define a padding from the goal or current (which ever is higher)
-		marginBar = {
-			label: '', // Y margin
-			backgroundColor: 'rgba(1, 1, 1, 0)',
-			borderColor: '#E0E0E0',
-			borderWidth: 1,
+	// Duplicate of currentPath to display progress in 'Bonus HTG' on second axis
+		currentPathHTG = {
+			yAxisID: 'Y2',
+			label: '',
 			radius: 0,
 			showLine: false,
-			// [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
-			data: null,
+			data: null
+		},
+		chartOptions = {
+			scales: {
+				yAxes: [{
+					type: 'linear',
+					display: true,
+					position: 'left',
+					id: 'Y1',
+					ticks: {
+						autoSkip: false,
+						min: 0,
+						minRotation: 30,
+					}
+				}, {
+					type: 'linear',
+					display: true,
+					position: 'right',
+					id: 'Y2',
+					ticks: {
+						min: 0,
+						minRotation: 30,
+						// Include a dollar sign in the ticks
+						callback: function (value, index, values) {
+							let profit =  calculateBonus(value, goal, minGoal);
+							return (profit == 0 ? "" : profit + "HTG");
+						},
+					},
+					// grid line settings
+					gridLines: {
+						drawOnChartArea: false, // only want the grid lines for one axis to show up
+					},
+				}],
+			}
 		};
 
 $(window).on("load", function() {
@@ -82,11 +122,11 @@ $(window).on("load", function() {
 			// The data for our dataset
 			data: {
 				labels: daysInMonth,
-				datasets: [goalBar, goalPath, profitBar, currentPath, marginBar]
+				datasets: [goalBar, goalPath, profitBar, currentPath, currentPathHTG]
 			},
 
 			// Configuration options go here
-			options: {}
+			options: chartOptions
 		});
 
 		fetchDashboardData(params, chart);
@@ -160,7 +200,6 @@ function fetchDashboardData(params, chart) {
 				const availableDays = Object.keys(response.dailyVolume),
 					labels = chart.data.labels;
 
-				let latestVolume = 0;
 				let recordCount = 0;
 
 				// On days when kiosks don't open we make sure we set the last set value
@@ -168,34 +207,41 @@ function fetchDashboardData(params, chart) {
 				// after the last day with records.
 				const newData = labels.map((day, idx) => {
 					if (availableDays.includes(day)) {
-						latestVolume += response.dailyVolume[day];
+						updatedVolume += response.dailyVolume[day];
 
 						recordCount++;
 
-						return latestVolume;
+						return updatedVolume;
 					} else if (recordCount >= availableDays.length) {
 						return null;
 					}
 
-					return latestVolume;
+					return updatedVolume;
 				});
 
 				// We update the bar values, the card values and update the chart
-				const goal = getSettingsValue(response.settings, 'monthly_goal'),
-					minGoal = getSettingsValue(response.settings, 'min_monthly_goal'),
-					marginY = Math.max(goal, latestVolume) * 1.1;
+				goal = getSettingsValue(response.settings, 'monthly_goal');
+				minGoal = getSettingsValue(response.settings, 'min_monthly_goal');
+				const marginY = Math.max(goal, updatedVolume) * 1.1;
 
 
-				$('#water-volume').text(latestVolume);
+				$('#water-volume').text(updatedVolume);
 				$('#goal').text(goal);
-				$('#bonus').text(Number(parseFloat(calculateBonus(latestVolume, goal, minGoal)).toFixed(2)));
+				$('#bonus').text(Number(parseFloat(calculateBonus(updatedVolume, goal, minGoal)).toFixed(2)));
 
-				// Index ordered as follow: [goal, goalPath, bar, currentPath, marginY]
+				// Index ordered as follow: [goal, goalPath, bar, currentPath, currentPathHTG]
 				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];
 				chart.data.datasets[1].data = [{x: 0,y: 0}, {x: lastDayInMonth,y: goal}]
 				chart.data.datasets[2].data = [{ x: 0,y: minGoal}, {x: lastDayInMonth,y: minGoal }];
 				chart.data.datasets[3].data = newData;
 				chart.data.datasets[4].data = [{ x: 0,y: marginY}, {x: lastDayInMonth,y: marginY }];
+				chart.data.datasets[5].data = newData.map((volume, key) => {
+					console.log(volume);
+					console.log(key);
+					return volume/1;
+				});
+				chart.options.scales.yAxes[0].ticks.max = 90000;
+				chart.options.scales.yAxes[1].ticks.max = 90000;
 
 				chart.update();
 				resolve();
