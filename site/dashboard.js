@@ -1,7 +1,13 @@
 "use strict";
 
 const API_BASE_URL = 'http://dlo.semawater.org/';
-const DEFAULT_SYNC_INTERVAL = 10 * 60; // 10 minutes
+
+// 10 minutes sync interval
+const DEFAULT_SYNC_INTERVAL = 10 * 60;
+
+// Last time dashboard has been refreshed
+// let LAST_REFRESHED_TIME = new Date.now();
+
 
 // Initialize our chart data
 const daysInMonth = getDaysInMonth((new Date().getMonth() + 1), new Date().getFullYear());
@@ -58,7 +64,7 @@ const currentPath = {
 			// [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
 			data: null,
 		},
-	// Duplicate of currentPath to display progress in 'Bonus HTG' on second axis
+	// Duplicate of currentPath to (trick) display of  'Bonus in HTG' on second axis
 		currentPathHTG = {
 			yAxisID: 'Y2',
 			label: '',
@@ -76,7 +82,7 @@ const currentPath = {
 					ticks: {
 						autoSkip: false,
 						min: 0,
-						minRotation: 30,
+						minRotation: 10,
 					}
 				}, {
 					type: 'linear',
@@ -85,11 +91,11 @@ const currentPath = {
 					id: 'Y2',
 					ticks: {
 						min: 0,
-						minRotation: 30,
+						minRotation: 10,
 						// Include a dollar sign in the ticks
 						callback: function (value, index, values) {
 							let profit =  calculateBonus(value, goal, minGoal);
-							return (profit == 0 ? "" : profit + "HTG");
+							return (profit == 0 ? "" : profit + " HTG");
 						},
 					},
 					// grid line settings
@@ -222,28 +228,22 @@ function fetchDashboardData(params, chart) {
 				// We update the bar values, the card values and update the chart
 				goal = getSettingsValue(response.settings, 'monthly_goal');
 				minGoal = getSettingsValue(response.settings, 'min_monthly_goal');
-				const marginY = Math.max(goal, updatedVolume) * 1.1;
-
+				const marginY = Math.max(goal, updatedVolume) * 1.2;
 
 				$('#water-volume').text(updatedVolume);
 				$('#goal').text(goal);
 				$('#bonus').text(Number(parseFloat(calculateBonus(updatedVolume, goal, minGoal)).toFixed(2)));
 
 				// Index ordered as follow: [goal, goalPath, bar, currentPath, currentPathHTG]
-				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];
-				chart.data.datasets[1].data = [{x: 0,y: 0}, {x: lastDayInMonth,y: goal}]
-				chart.data.datasets[2].data = [{ x: 0,y: minGoal}, {x: lastDayInMonth,y: minGoal }];
-				chart.data.datasets[3].data = newData;
-				chart.data.datasets[4].data = [{ x: 0,y: marginY}, {x: lastDayInMonth,y: marginY }];
-				chart.data.datasets[5].data = newData.map((volume, key) => {
-					console.log(volume);
-					console.log(key);
-					return volume/1;
-				});
-				chart.options.scales.yAxes[0].ticks.max = 90000;
-				chart.options.scales.yAxes[1].ticks.max = 90000;
+				chart.data.datasets[0].data = [{ x: 0,y: goal}, {x: lastDayInMonth,y: goal }];  // Goal
+				chart.data.datasets[1].data = [{x: 0,y: 0}, {x: lastDayInMonth,y: goal}];   // goalPath
+				chart.data.datasets[2].data = [{ x: 0,y: minGoal}, {x: lastDayInMonth,y: minGoal }];    // bar
+				chart.data.datasets[3].data = chart.data.datasets[4].data = newData;  // currentPath & currentPathHTG
+
+				chart.options.scales.yAxes[0].ticks.max = chart.options.scales.yAxes[1].ticks.max = marginY;
 
 				chart.update();
+                // LAST_REFRESHED_TIME = new Date.now();
 				resolve();
 			})
 			.catch(err => {
