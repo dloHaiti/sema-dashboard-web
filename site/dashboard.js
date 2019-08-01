@@ -10,11 +10,13 @@ const DEFAULT_SYNC_INTERVAL = 10 * 60;
 
 
 // Initialize our chart data
-const daysInMonth = getDaysInMonth((new Date().getMonth() + 1), new Date().getFullYear());
+const actualMonth = 7; // new Date().getMonth() + 1;
+const actualYear = new Date().getFullYear();
+const daysInMonth = getDaysInMonth(actualMonth, actualYear);
 const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
 const params = {
-	beginDate: moment().startOf('month').format('YYYY-MM-DD'),
-	endDate: moment().endOf('month').format('YYYY-MM-DD')
+	beginDate: "2019-07-01", // moment().startOf('month').format('YYYY-MM-DD'),
+	endDate: "2019-08-01"// moment().endOf('month').format('YYYY-MM-DD')
 };
 
 

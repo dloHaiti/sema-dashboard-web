@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="acce5292-f985-4a4b-af13-c579c8425fac" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/site/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/index.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -31,12 +31,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/site/dashboard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="245" column="19" selection-start-line="245" selection-start-column="19" selection-end-line="245" selection-end-column="19" />
+            <state relative-caret-position="270">
+              <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
               <folding>
                 <element signature="n#!!block;n#refresh#0" />
                 <element signature="n#!!block;n#getTimeAndDate#0" />
                 <element signature="n#!!block;n#validateURL#0" />
+                <element signature="n#!!block;n#fetchDashboardData#0" />
                 <element signature="n#!!block;n#calculateBonus#0" />
                 <element signature="n#!!block;n#getSettingsValue#0" />
                 <element signature="n#!!block;n#getDaysInMonth#0" />
@@ -93,6 +94,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -109,7 +111,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -163,12 +164,13 @@
       <workItem from="1563978649268" duration="600000" />
       <workItem from="1564063230713" duration="261000" />
       <workItem from="1564079840891" duration="225000" />
-      <workItem from="1564135815751" duration="2743000" />
+      <workItem from="1564135815751" duration="4066000" />
+      <workItem from="1564651236560" duration="639000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24305000" />
+    <option name="totallyTimeSpent" value="26267000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="837" extended-state="0" />
@@ -201,8 +203,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/site/dashboard.js</url>
-          <line>188</line>
-          <properties lambdaOrdinal="-1" />
+          <line>190</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
@@ -235,12 +236,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/site/dashboard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="245" column="19" selection-start-line="245" selection-start-column="19" selection-end-line="245" selection-end-column="19" />
+        <state relative-caret-position="270">
+          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
           <folding>
             <element signature="n#!!block;n#refresh#0" />
             <element signature="n#!!block;n#getTimeAndDate#0" />
             <element signature="n#!!block;n#validateURL#0" />
+            <element signature="n#!!block;n#fetchDashboardData#0" />
             <element signature="n#!!block;n#calculateBonus#0" />
             <element signature="n#!!block;n#getSettingsValue#0" />
             <element signature="n#!!block;n#getDaysInMonth#0" />
