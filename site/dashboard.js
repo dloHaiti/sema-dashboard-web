@@ -10,7 +10,7 @@ const DEFAULT_SYNC_INTERVAL = 10 * 60;
 
 
 // Initialize our chart data
-const actualMonth = 7; // new Date().getMonth() + 1;
+const actualMonth = new Date().getMonth() + 1;
 const actualYear = new Date().getFullYear();
 const daysInMonth = getDaysInMonth(actualMonth, actualYear);
 const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
@@ -276,7 +276,7 @@ function getDaysInMonth(month, year) {
 	// Total days in month
 	let monthList= [],
 		daysTotal = new Date(year, month, 0).getDate(),
-		monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+		monthsList = ["Jav", "Fev", "Mar", "Avr", "Me", "Jwn", "Jiy", "Out", "Sep", "Okt", "Nov", "Des"],
 		daysList = [];
 	// Creating day list for the specified month
 	for(let i=0; i<daysTotal; i++){
