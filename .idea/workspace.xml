@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="acce5292-f985-4a4b-af13-c579c8425fac" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/site/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/site/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/index.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -19,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/site/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="870">
-              <caret line="58" column="29" selection-start-line="58" selection-start-column="29" selection-end-line="58" selection-end-column="29" />
+            <state relative-caret-position="115">
+              <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#h2#0;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
@@ -31,25 +30,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/site/dashboard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="245" column="19" selection-start-line="245" selection-start-column="19" selection-end-line="245" selection-end-column="19" />
+            <state relative-caret-position="95">
+              <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
               <folding>
-                <element signature="n#!!block;n#refresh#0" />
                 <element signature="n#!!block;n#getTimeAndDate#0" />
+                <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
                 <element signature="n#!!block;n#validateURL#0" />
                 <element signature="n#!!block;n#calculateBonus#0" />
                 <element signature="n#!!block;n#getSettingsValue#0" />
                 <element signature="n#!!block;n#getDaysInMonth#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Desktop/test.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="43" column="8" selection-start-line="43" selection-start-column="8" selection-end-line="43" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -75,7 +65,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$USER_HOME$/Desktop/test.html" />
+        <option value="$PROJECT_DIR$/../test.html" />
         <option value="$PROJECT_DIR$/site/dashboard.css" />
         <option value="$PROJECT_DIR$/site/index.html" />
         <option value="$PROJECT_DIR$/site/dashboard.js" />
@@ -84,7 +74,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1440" />
+    <option name="width" value="1416" />
     <option name="height" value="837" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -164,17 +154,18 @@
       <workItem from="1564063230713" duration="261000" />
       <workItem from="1564079840891" duration="225000" />
       <workItem from="1564135815751" duration="2743000" />
+      <workItem from="1572408447199" duration="3666000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24305000" />
+    <option name="totallyTimeSpent" value="27971000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="837" extended-state="0" />
+    <frame x="0" y="23" width="1416" height="837" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14094433" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14316547" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -186,7 +177,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.24026845" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.23966943" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -201,8 +192,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/site/dashboard.js</url>
-          <line>188</line>
-          <properties lambdaOrdinal="-1" />
+          <line>206</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
@@ -216,17 +206,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="43" column="8" selection-start-line="43" selection-start-column="8" selection-end-line="43" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../test.html" />
     <entry file="file://$PROJECT_DIR$/site/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
-          <caret line="58" column="29" selection-start-line="58" selection-start-column="29" selection-end-line="58" selection-end-column="29" />
+        <state relative-caret-position="115">
+          <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
           <folding>
             <element signature="n#style#0;n#div#0;n#h2#0;n#div#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
@@ -235,11 +219,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/site/dashboard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="245" column="19" selection-start-line="245" selection-start-column="19" selection-end-line="245" selection-end-column="19" />
+        <state relative-caret-position="95">
+          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
           <folding>
-            <element signature="n#!!block;n#refresh#0" />
             <element signature="n#!!block;n#getTimeAndDate#0" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
             <element signature="n#!!block;n#validateURL#0" />
             <element signature="n#!!block;n#calculateBonus#0" />
             <element signature="n#!!block;n#getSettingsValue#0" />

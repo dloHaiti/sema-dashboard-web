@@ -2,15 +2,18 @@
 
 const API_BASE_URL = "http://dlo.semawater.org/";
 
-// 10 minutes sync interval
-const DEFAULT_SYNC_INTERVAL = 10 * 60;
+
+// 4 minutes sync interval (: m * s * ms)
+const DEFAULT_SYNC_INTERVAL = 4 * 60 * 1000;
 
 // Last time dashboard has been refreshed
-// let LAST_REFRESHED_TIME = new Date.now();
+let LAST_REFRESHED_TIME = new Date();
 
 // Initialize our chart data
-const daysInMonth = getDaysInMonth(7, 2019);
+const today = new Date();
+const daysInMonth = getDaysInMonth(today.getMonth() + 1, today.getFullYear());
 const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
+
 const params = {
   beginDate: moment()
     .startOf("month")
@@ -20,12 +23,16 @@ const params = {
     .format("YYYY-MM-DD")
 };
 
+// Declare our chart at global scope
+let chart;
+
 // Declare goal and minGoal as global
 let updatedVolume = null,
   goal = null,
   minGoal = null;
+
 // Initialize dashboard variables
-const currentPath = {
+const volumePath = {
     yAxisID: "Y1",
     label: "Volim Dlo Aktyèl",
     backgroundColor: "rgba(1, 1, 1, 0)",
@@ -35,6 +42,14 @@ const currentPath = {
     data: null,
     fill: "start"
   },
+    // Duplicate of volumePath to (trick) display of  'Bonus in HTG' on second axis
+    htgPath = {
+        yAxisID: "Y2",
+        label: "",
+        radius: 0,
+        showLine: false,
+        data: null
+    },
   goalPath = {
     yAxisID: "Y1",
     label: "Wout Objektif",
@@ -46,7 +61,7 @@ const currentPath = {
     // data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
     data: null
   },
-  goalBar = {
+  minBar = {
     yAxisID: "Y1",
     label: "Objektif",
     backgroundColor: "rgba(1, 1, 1, 0)",
@@ -56,7 +71,7 @@ const currentPath = {
     // [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
     data: null
   },
-  profitBar = {
+  goalBar = {
     yAxisID: "Y1",
     label: "Objektif Minimum",
     backgroundColor: "rgba(1, 1, 1, 0)",
@@ -64,14 +79,6 @@ const currentPath = {
     borderWidth: 2,
     radius: 0,
     // [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
-    data: null
-  },
-  // Duplicate of currentPath to (trick) display of  'Bonus in HTG' on second axis
-  currentPathHTG = {
-    yAxisID: "Y2",
-    label: "",
-    radius: 0,
-    showLine: false,
     data: null
   },
   chartOptions = {
@@ -98,8 +105,9 @@ const currentPath = {
             minRotation: 10,
             // Include a dollar sign in the ticks
             callback: function(value, index, values) {
+              // Calculate profit base on current volume
               let profit = calculateBonus(value, goal, minGoal);
-              return profit == 0 ? "" : profit + " HTG";
+              return profit == 0 ? "" : Math.round(profit) + " HTG";
             }
           },
           // grid line settings
@@ -111,13 +119,16 @@ const currentPath = {
     }
   };
 
+
+
 $(window).on("load", function() {
-  // Refresh the date and time every second for live time and as well as connectivity status
-  setInterval(refresh, 1000);
 
   if ((params.siteName = validateURL())) {
     // Update kiosk name on dashboard
     $("#kiosk-name").text(params.siteName);
+
+    // Update kiosk volume
+    fetchDashboardData(params);
 
     // Select the canvas for our chart
     let canvas = $("#canvas")[0],
@@ -125,37 +136,47 @@ $(window).on("load", function() {
 
     // Setup our chart here
     Chart.defaults.global.elements.line.tension = 0.1;
-    const chart = new Chart(ctx, {
+    chart = new Chart(ctx, {
       // The type of chart we want to create
       type: "line",
 
       // The data for our dataset
       data: {
         labels: daysInMonth,
-        datasets: [goalBar, goalPath, profitBar, currentPath, currentPathHTG]
+        datasets: [minBar, goalBar, goalPath, volumePath, htgPath]
       },
 
       // Configuration options go here
       options: chartOptions
     });
 
-    fetchDashboardData(params, chart);
+    // Refresh time, data/volume and as well as connectivity status
+    setInterval(function(){
+        refresh(params);
+    }, 1000);
+
   }
 });
 
+
 // Refresh app locally
-function refresh() {
+function refresh(params) {
   // Update the time and date
   $("#date").html(getTimeAndDate());
+
   // Update connectivity status
   if (!navigator.onLine) {
     $("#offline-status").show();
   } else {
     $("#offline-status").hide();
   }
+
+  // Update kiosk data/volume (every DEFAULT_SYNC_INTERVAL)
+  if(Date.now() >= LAST_REFRESHED_TIME + DEFAULT_SYNC_INTERVAL)
+      fetchDashboardData(params);
 }
 
-// return current time and date
+// Return current time and date
 function getTimeAndDate() {
   const spDate = "/";
   const spTime = ":";
@@ -178,7 +199,7 @@ function getTimeAndDate() {
   return (
     '<span class="date-data">' +
     date +
-    '</span> <span class="date-data">' +
+    '</span> <span class="date-data" style="float: right;">' +
     time +
     "</span>"
   );
@@ -197,175 +218,97 @@ function validateURL() {
 }
 
 // Fetch kiosk number from SEMA
-function fetchDashboardData(params, chart) {
-  return new Promise((resolve, reject) => {
-    let url = "dataset/dashboard?siteName=" + params.siteName;
+function  fetchDashboardData(params) {
 
-    url = url + "&beginDate=" + "2019-07-01";
-    url = url + "&endDate=" + "2019-08-01";
+  return new Promise(async (resolve, reject) => {
+      let url = "dataset/dashboard?siteName=" + params.siteName;
 
-    fetch(`${API_BASE_URL}${url}`)
-      .then(response => response.json())
-      .then(response => {
-        // Make sure the right kiosk is set during configuration
-        if (response.status === 404) {
+      url = url + "&beginDate=" + params.beginDate;
+      url = url + "&endDate=" + params.endDate;
+
+      let request = await fetch(`${API_BASE_URL}${url}`);
+      let response = await request.json();
+
+      // Make sure the right kiosk is set during configuration
+      if (response.status === 404) {
           alert(response.msg);
           location.reload();
-        }
+      }
 
-        // We update the dataset on server response
-        const availableDays = Object.keys(response.dailyVolume),
+      // We update the dataset on server response
+      const availableDays = Object.keys(response.dailyVolume),
           labels = chart.data.labels;
-        let updatedVolume = 0;
+      let updatedVolume = 0;
 
-        let recordCount = 0;
+      let recordCount = 0;
 
-        // On days when kiosks don't open we make sure we set the last set value
-        // So that the line stays horizontal. Also, we don't display anything
-        // after the last day with records.
-        const newData = labels.map((day, idx) => {
-          if (params.siteName === "cabaret") {
-            switch (day) {
-              case "Jul 1":
-                updatedVolume += 6276;
-                recordCount++;
-                break;
-              case "Jul 2":
-                updatedVolume += 5070;
-                recordCount++;
-                break;
-              case "Jul 3":
-                updatedVolume += 3076;
-                recordCount++;
-                break;
-              case "Jul 4":
-                updatedVolume += 2484;
-                recordCount++;
-                break;
-              case "Jul 5":
-                updatedVolume += 3794;
-                recordCount++;
-                break;
-              case "Jul 6":
-                updatedVolume += 672;
-                recordCount++;
-                break;
-              case "Jul 8":
-                updatedVolume += 4239;
-                recordCount++;
-                break;
-              case "Jul 9":
-                updatedVolume += 4122;
-                recordCount++;
-                break;
-              case "Jul 10":
-                updatedVolume += 5213;
-                recordCount++;
-                break;
-              case "Jul 11":
-                updatedVolume += 4057;
-                recordCount++;
-                break;
-              case "Jul 12":
-                updatedVolume += 4711;
-                recordCount++;
-                break;
-              case "Jul 13":
-                updatedVolume += 4120;
-                recordCount++;
-                break;
-              case "Jul 15":
-                updatedVolume += 4411;
-                recordCount++;
-                break;
-              case "Jul 16":
-                updatedVolume += 1607;
-                recordCount++;
-                break;
-              case "Jul 17":
-                updatedVolume += 3083;
-                recordCount++;
-                break;
-              case "Jul 18":
-                updatedVolume += 4034;
-                recordCount++;
-                break;
-              case "Jul 19":
-                updatedVolume += 4072;
-                recordCount++;
-                break;
-              case "Jul 20":
-                updatedVolume += 2544;
-                recordCount++;
-              case "Jul 22":
-                updatedVolume += 2244;
-                recordCount++;
-              case "Jul 24":
-                updatedVolume += 2244;
-                recordCount++;
-              case "Jul 25":
-                updatedVolume += 2244;
-                recordCount++;
-              case "Jul 27":
-                updatedVolume += 2244;
-                recordCount++;
-                break;
-              default:
-                updatedVolume += availableDays.includes(day)
-                  ? response.dailyVolume[day]
-                  : 0;
-                recordCount++;
-            }
+      // On days when kiosks don't open we make sure we set the last set value
+      // So that the line stays horizontal. Also, we don't display anything
+      // after the last day with records.
+      const newData = labels.map((day, idx) => {
 
-            return updatedVolume;
-          }
+          if (recordCount == availableDays.length)
+              return null;
 
           if (availableDays.includes(day)) {
-            updatedVolume += response.dailyVolume[day];
-            recordCount++;
+              updatedVolume += response.dailyVolume[day];
+              recordCount++;
           }
-
           return updatedVolume;
-        });
 
-        // We update the bar values, the card values and update the chart
-        goal = getSettingsValue(response.settings, "monthly_goal");
-        minGoal = getSettingsValue(response.settings, "min_monthly_goal");
-        const marginY = Math.max(goal, updatedVolume) * 1.2;
-
-        $("#water-volume").text(updatedVolume);
-        $("#goal").text(goal);
-        $("#bonus").text(
-          Number(
-            parseFloat(calculateBonus(updatedVolume, goal, minGoal)).toFixed(2)
-          )
-        );
-
-        // Index ordered as follow: [goal, goalPath, bar, currentPath, currentPathHTG]
-        chart.data.datasets[0].data = [
-          { x: 0, y: goal },
-          { x: lastDayInMonth, y: goal }
-        ]; // Goal
-        chart.data.datasets[1].data = [
-          { x: 0, y: 0 },
-          { x: lastDayInMonth, y: goal }
-        ]; // goalPath
-        chart.data.datasets[2].data = [
-          { x: 0, y: minGoal },
-          { x: lastDayInMonth, y: minGoal }
-        ]; // bar
-        chart.data.datasets[3].data = chart.data.datasets[4].data = newData; // currentPath & currentPathHTG
-
-        chart.options.scales.yAxes[0].ticks.max = chart.options.scales.yAxes[1].ticks.max = marginY;
-
-        chart.update();
-        // LAST_REFRESHED_TIME = new Date.now();
-        resolve();
-      })
-      .catch(err => {
-        throw err;
       });
+
+      // We update the bar values, the card values and update the chart
+      goal = getSettingsValue(response.settings, "monthly_goal");
+      minGoal = getSettingsValue(response.settings, "min_monthly_goal");
+
+      $("#water-volume").text(updatedVolume);
+      $("#goal").text(goal);
+      $("#bonus").text(
+          Number(
+              parseFloat(calculateBonus(updatedVolume, goal, minGoal)).toFixed(2)
+          )
+      );
+
+      updateChartData(goal, minGoal, newData, updatedVolume);
+
+      LAST_REFRESHED_TIME = Date.now();
+      resolve();
   });
+}
+
+
+function updateChartData(goal, bar, actual){
+
+    // Caculate Y margin to see upper profit in HTG
+    const marginY = Math.max(goal, updatedVolume) * 1.2;
+
+    // Index ordered as follow: [goal, goalPath, minBar, volumePath, htgPath]:
+
+    // goalBar
+    chart.data.datasets[0].data = [
+        {x: 0, y: goal},
+        {x: lastDayInMonth, y: goal}
+    ];
+    // goalPath
+    chart.data.datasets[1].data = [
+        {x: 0, y: 0},
+        {x: lastDayInMonth, y: goal}
+    ];
+    // minBar
+    chart.data.datasets[2].data = [
+        {x: 0, y: bar},
+        {x: lastDayInMonth, y: bar}
+    ];
+
+    // Actual volume & HTG
+    chart.data.datasets[3].data = chart.data.datasets[4].data = actual;
+
+    // Set higher Y margin
+    chart.options.scales.yAxes[0].ticks.max = chart.options.scales.yAxes[1].ticks.max = marginY;
+
+    // Update chart
+    chart.update();
 }
 
 // So the formula goes:
