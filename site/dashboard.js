@@ -50,6 +50,16 @@ const volumePath = {
         showLine: false,
         data: null
     },
+    minBar = {
+        yAxisID: "Y1",
+        label: "Objektif Minimum",
+        backgroundColor: "rgba(1, 1, 1, 0)",
+        borderColor: "#facb35",
+        borderWidth: 2,
+        radius: 0,
+        // [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
+        data: null
+    },
     goalPath = {
         yAxisID: "Y1",
         label: "Wout Objektif",
@@ -61,7 +71,7 @@ const volumePath = {
         // data: [{x: 0,y: 0}, {x: lastDayInMonth,y: 88000}]
         data: null
     },
-    minBar = {
+    goalBar = {
         yAxisID: "Y1",
         label: "Objektif",
         backgroundColor: "rgba(1, 1, 1, 0)",
@@ -69,16 +79,6 @@ const volumePath = {
         borderWidth: 2,
         radius: 0,
         // [{x: 0,y: 88000}, {x: lastDayInMonth,y: 88000}]
-        data: null
-    },
-    goalBar = {
-        yAxisID: "Y1",
-        label: "Objektif Minimum",
-        backgroundColor: "rgba(1, 1, 1, 0)",
-        borderColor: "#facb35",
-        borderWidth: 2,
-        radius: 0,
-        // [{x: 0,y: 62000}, {x: lastDayInMonth,y: 62000}]
         data: null
     },
     chartOptions = {
@@ -283,25 +283,25 @@ function updateChartData(goal, bar, actual){
     // Caculate Y margin to see upper profit in HTG
     const marginY = Math.max(goal, updatedVolume) * 1.2;
 
-    // Index ordered as follow: [goal, goalPath, minBar, volumePath, htgPath]:
+    //datasets Index ordered as follow: [minBar, goalBar, goalPath, volumePath, htgPath]
 
-    // goalBar
+
+    // 0. minBar
     chart.data.datasets[0].data = [
-        {x: 0, y: goal},
-        {x: lastDayInMonth, y: goal}
-    ];
-    // goalPath
-    chart.data.datasets[1].data = [
-        {x: 0, y: 0},
-        {x: lastDayInMonth, y: goal}
-    ];
-    // minBar
-    chart.data.datasets[2].data = [
         {x: 0, y: bar},
         {x: lastDayInMonth, y: bar}
     ];
-
-    // Actual volume & HTG
+    // 1. goalBar
+    chart.data.datasets[1].data = [
+        {x: 0, y: goal},
+        {x: lastDayInMonth, y: goal}
+    ];
+    // 2. goalPath
+    chart.data.datasets[2].data = [
+        {x: 0, y: 0},
+        {x: lastDayInMonth, y: goal}
+    ];
+    // 3. & 4. Actual volume & HTG
     chart.data.datasets[3].data = chart.data.datasets[4].data = actual;
 
     // Set higher Y margin
