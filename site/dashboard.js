@@ -3,25 +3,18 @@
 const API_BASE_URL = "http://dlo.semawater.org/";
 
 
-// 4 minutes sync interval (: m * s * ms)
-const DEFAULT_SYNC_INTERVAL = 4 * 60 * 1000;
+// 1 minutes sync interval (: m * s * ms)
+const DEFAULT_SYNC_INTERVAL = 1 * 60 * 1000;
 
 // Last time dashboard has been refreshed
-let LAST_REFRESHED_TIME = new Date();
+let LAST_REFRESHED_TIME = Date.now();
 
 // Initialize our chart data
-const today = new Date();
-const daysInMonth = getDaysInMonth(today.getMonth() + 1, today.getFullYear());
-const lastDayInMonth = daysInMonth[daysInMonth.length - 1];
+let  daysInMonth;
+let  lastDayInMonth;
 
-const params = {
-    beginDate: moment()
-        .startOf("month")
-        .format("YYYY-MM-DD"),
-    endDate: moment()
-        .endOf("month")
-        .format("YYYY-MM-DD")
-};
+// Dashboard URL params
+let params = {};
 
 // Declare our chart at global scope
 let chart;
@@ -123,9 +116,19 @@ const volumePath = {
 
 $(window).on("load", function() {
 
-    if ((params.siteName = validateURL())) {
+    if (params = validateURL()) {
         // Update kiosk name on dashboard
         $("#kiosk-name").text(params.siteName);
+
+        params.beginDate = moment(params.beginDate || new Date()).startOf("month")
+            .format("YYYY-MM-DD");
+        params.endDate = moment(params.beginDate).endOf("month")
+            .format("YYYY-MM-DD");
+
+        let today = new Date(moment(params.beginDate).format());
+        daysInMonth = getDaysInMonth(today.getMonth() + 1, today.getFullYear());
+        lastDayInMonth = daysInMonth[daysInMonth.length - 1];
+
 
         // Update kiosk volume
         fetchDashboardData(params);
@@ -207,14 +210,23 @@ function getTimeAndDate() {
 
 // Valid URL contains kiosk parameter. isValid, return kiosk name. Otherwise, null
 function validateURL() {
-    const urlParams = new URLSearchParams(location.search),
-        kiosk = urlParams.get("k") || urlParams.get("kiosk");
+    let urlParams = new URLSearchParams(location.search),
+        siteName = urlParams.get("k") || urlParams.get("kiosk"),
+        beginDate = urlParams.get("beginDate") || urlParams.get("date");
+
     // There is no kiosk parameter; invalid URL
-    if (!kiosk)
+    if (!siteName)
         confirm(
             "Pa gen kyòsk nan lyen an. SVP, mete yon kyòsk konsa: .../?k=cabaret"
         );
-    return kiosk;
+    // Check if value of date is correct
+    if(beginDate && isNaN(new Date(beginDate))){
+        confirm(
+            "Foma dat lan pa korèk. Re-verifye li, i.e., : .../?beginDate=02/27/2020"
+        );
+        beginDate = new Date(beginDate);
+    }
+    return {siteName, beginDate};
 }
 
 // Fetch kiosk number from SEMA
@@ -283,8 +295,7 @@ function updateChartData(goal, bar, actual){
     // Caculate Y margin to see upper profit in HTG
     const marginY = Math.max(goal, updatedVolume) * 1.2;
 
-    //datasets Index ordered as follow: [minBar, goalBar, goalPath, volumePath, htgPath]
-
+    //datasets Index ordered as follow: [minBar, goalBar, goalPath, volumePath, htgPath]:
 
     // 0. minBar
     chart.data.datasets[0].data = [
