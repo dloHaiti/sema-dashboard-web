@@ -4,7 +4,7 @@ const API_BASE_URL = "http://dlo.semawater.org/";
 
 
 // 1 minutes sync interval (: m * s * ms)
-const DEFAULT_SYNC_INTERVAL = 1 * 60 * 1000;
+const DEFAULT_SYNC_INTERVAL = 4 * 60 * 1000;
 
 // Last time dashboard has been refreshed
 let LAST_REFRESHED_TIME = Date.now();
