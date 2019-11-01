@@ -120,10 +120,8 @@ $(window).on("load", function() {
         // Update kiosk name on dashboard
         $("#kiosk-name").text(params.siteName);
 
-        params.beginDate = moment(params.beginDate || new Date()).startOf("month")
-            .format("YYYY-MM-DD");
-        params.endDate = moment(params.beginDate).endOf("month")
-            .format("YYYY-MM-DD");
+        params.beginDate = moment(params.beginDate || new Date()).format();
+        params.endDate = moment(params.beginDate).endOf("month").format();
 
         let today = new Date(moment(params.beginDate).format());
         daysInMonth = getDaysInMonth(today.getMonth() + 1, today.getFullYear());
@@ -250,13 +248,13 @@ function  fetchDashboardData(params) {
         // We update the dataset on server response
         const availableDays = Object.keys(response.dailyVolume),
             labels = chart.data.labels;
-        let updatedVolume = 0;
 
         let recordCount = 0;
 
         // On days when kiosks don't open we make sure we set the last set value
         // So that the line stays horizontal. Also, we don't display anything
         // after the last day with records.
+        updatedVolume = 0;
         const newData = labels.map((day, idx) => {
 
             if (recordCount == availableDays.length)
@@ -314,7 +312,7 @@ function updateChartData(goal, bar, actual){
     ];
     // 3. & 4. Actual volume & HTG
     chart.data.datasets[3].data = chart.data.datasets[4].data = actual;
-
+    updatedVolume
     // Set higher Y margin
     chart.options.scales.yAxes[0].ticks.max = chart.options.scales.yAxes[1].ticks.max = marginY;
 
